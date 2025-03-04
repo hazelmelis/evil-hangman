@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "my_string.h"
+int main(int argc, char* argv[])
+{
+  //push, pop, string at, c str, concat, empty
+  
+   MY_STRING hResult = my_string_init_default();
+  MY_STRING hAppend = my_string_init_c_string("");
+   MY_STRING hHuge = my_string_init_c_string("abracadabradagas\n");
+  
+  if (my_string_empty(hAppend) == TRUE) printf("Append string is empty.\n");
+
+  my_string_push_back(hAppend, 'd');
+   my_string_push_back(hAppend, 'a');
+   my_string_push_back(hAppend, 'y');
+
+  my_string_push_back(hResult, 'M');
+   my_string_push_back(hResult, 'o');
+    my_string_push_back(hResult, 'n');
+    my_string_push_back(hResult, 'k');
+     my_string_push_back(hResult, 'e');
+    my_string_push_back(hResult, 'y');
+
+      
+  printf("%s\n", my_string_c_str(hResult));
+
+  for (int i = 0; i < 3; i ++)
+    {
+      my_string_pop_back(hResult);
+    }
+
+  if (my_string_at(hResult, 3) == NULL) printf("Index out of bounds.\n");
+  
+  printf("%s\n", my_string_c_str(hResult));
+
+  printf("%c\n", *(my_string_at(hResult, 1)));
+
+  printf("size: %d\n", my_string_get_size(hResult));
+  printf("capacity: %d\n", my_string_get_capacity(hResult));
+
+  my_string_concat(hResult, hHuge);
+  printf("%s\n", my_string_c_str(hResult));
+  printf("size: %d\n", my_string_get_size(hResult));
+  printf("capacity: %d\n", my_string_get_capacity(hResult));
+   
+ my_string_destroy(&hResult);
+ my_string_destroy(&hAppend);
+ my_string_destroy(&hHuge);
+  
+ return 0;
+}

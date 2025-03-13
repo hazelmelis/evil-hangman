@@ -98,13 +98,17 @@ int my_string_compare(MY_STRING hLeft_string, MY_STRING hRight_string)
   My_string* pRight_string = (My_string*)hRight_string;
 
   int i = 0;
+  int left = 0;
+  int right = 0;
 
   while (i < pLeft_string->size && i < pRight_string->size && pLeft_string->data[i] == pRight_string->data[i])
     {
       i++;
+      left = pLeft_string->data[i];
+      right = pRight_string->data[i];
     }
 
-  return (int)pLeft_string->data[i] - (int)pRight_string->data[i];
+  return left - right;
 }
 		    
 Status my_string_extraction(MY_STRING hMy_string, FILE* fp)

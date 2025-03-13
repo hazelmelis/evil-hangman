@@ -6,7 +6,13 @@ int main(int argc, char* argv[])
  Status (*tests[])(char*, int) =
  {
  test_init_default_returns_nonNULL,
- test_get_size_on_init_default_returns_0
+ test_get_size_on_init_default_returns_0,
+ test_herkmen_init_default_cap_7,
+ test_herkmen_destroy_fixes_dangling_pointer,
+ test_herkmen_init_c_string_size,
+ test_herkmen_my_string_at_out_of_bounds,
+ test_herkmen_my_string_compare_returns0,
+ test_herkmen_my_string_compare_returns0_2,
  };
  int number_of_functions = sizeof(tests) / sizeof(tests[0]);
  int i;

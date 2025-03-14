@@ -1,1 +1,5 @@
+# Emacs temporary files
 #*#
+
+# Emacs backup files
+*~

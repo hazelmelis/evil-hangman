@@ -13,6 +13,10 @@ int main(int argc, char* argv[])
  test_herkmen_my_string_at_out_of_bounds,
  test_herkmen_my_string_compare_returns0,
  test_herkmen_my_string_compare_returns0_2,
+ test_herkmen_extraction_whitespace,
+ test_herkmen_extraction_size,
+ test_herkmen_extraction_capacity,
+ test_herkmen_extraction_eof,
  };
  int number_of_functions = sizeof(tests) / sizeof(tests[0]);
  int i;

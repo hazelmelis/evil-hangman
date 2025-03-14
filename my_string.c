@@ -114,7 +114,6 @@ int my_string_compare(MY_STRING hLeft_string, MY_STRING hRight_string)
 Status my_string_extraction(MY_STRING hMy_string, FILE* fp)
 {
   My_string* pMy_string = (My_string*)hMy_string;
-  pMy_string->size = 0;
     
   if (fp == NULL)
     {
@@ -123,11 +122,11 @@ Status my_string_extraction(MY_STRING hMy_string, FILE* fp)
     }
 
   char c;
-  int i = 0;
-  int noc;
-  noc = fscanf(fp, " %c", &c);
-
+  int noc = fscanf(fp, " %c", &c);
   if (noc != 1) return FAILURE;
+
+  pMy_string->size = 0;
+  int i = 0;
  
   while (!isspace(c) && !feof(fp))
   {

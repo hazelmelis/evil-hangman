@@ -3,8 +3,6 @@ CFLAGS = -Wall --std=c99
 OBJECTS = main.o my_string.o
 TESTOBJ = my_string.o unit_test.o test_def.o
 
-all: string_driver unit_test
-
 string_driver: $(OBJECTS)
 	$(CC) $(CFLAGS) -o string_driver $(OBJECTS)
 main.o: main.c

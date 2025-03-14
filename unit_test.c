@@ -17,6 +17,20 @@ int main(int argc, char* argv[])
  test_herkmen_extraction_size,
  test_herkmen_extraction_capacity,
  test_herkmen_extraction_eof,
+ test_herkmen_insertion_string,
+ test_herkmen_pushback_success,
+ test_herkmen_pushback_resize,
+ test_herkmen_popback_empty,
+ test_herkmen_popback_empty1,
+ test_herkmen_popback_cap,
+ test_herkmen_myStringAt_inBounds,
+ test_herkmen_myStringAt_outOfBounds,
+ test_herkmen_myStringAt_outOfBounds1,
+ test_herkmen_c_str,
+ test_herkmen_c_str_size,
+ test_herkmen_concat_size,
+ test_herkmen_empty
+
  };
  int number_of_functions = sizeof(tests) / sizeof(tests[0]);
  int i;

@@ -251,5 +251,52 @@ Boolean my_string_empty(MY_STRING hMy_string)
 
 }
 
+Status my_string_assignment(MY_STRING hLeft, MY_STRING hRight)
+{
+	My_string* pLeft = (My_string*)hLeft;
+	My_string* pRight = (My_string*)hRight;
 
+	char* temp_data = (char*)malloc(sizeof(char) * pLeft->capacity);
+	if (temp_data == NULL) return FAILURE;
+	int temp_size = 0;
+	int temp_capacity = pLeft->capacity;
 
+	for (int i = 0; i < pRight->size; i++)
+	{		
+		if (temp_capacity - 1 <= i)
+		{
+			char* temp_data1 = (char*)realloc(temp_data, temp_capacity * 2);
+			if (temp_data1 == NULL) 
+			{
+				free(temp_data);
+				return FAILURE;
+			}
+			temp_capacity *= 2;
+		}
+
+		temp_data[i] = *(my_string_at(hRight, i));
+		temp_size++;
+	}
+	
+	free(pLeft->data);
+	pLeft->size = temp_size;
+	pLeft->capacity = temp_capacity;
+	pLeft->data = temp_data;
+
+	pRight->data[2] = 'W';
+
+	return SUCCESS;
+}
+
+MY_STRING my_string_init_copy(MY_STRING hMy_string)
+{
+	MY_STRING hCopy = my_string_init_default();
+	if (hCopy == NULL) return FAILURE;
+
+	if (my_string_assignment(hCopy, hMy_string) == FAILURE)
+	{
+		return NULL;
+	}
+	return hCopy;
+
+}

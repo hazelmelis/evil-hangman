@@ -35,3 +35,7 @@ char* my_string_c_str(MY_STRING hMy_string);
 Status my_string_concat(MY_STRING hResult, MY_STRING hAppend);
 
 Boolean my_string_empty(MY_STRING hMy_string);
+
+Status my_string_assignment(MY_STRING hLeft, MY_STRING hRight);
+
+MY_STRING my_string_init_copy(MY_STRING hMy_string);

@@ -1,38 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "my_string.h"
+#include "generic_vector.h"
+
 int main(int argc, char* argv[])
 {
-	MY_STRING a[100]; 
-	for (int i = 0; i < 100; i++)
+
+	GENERIC_VECTOR a[30];
+	for (int i = 0; i < 30; i++)
 	{
-		a[i] = NULL;
+		a[i] = generic_vector_init_default(my_string_init_copy, my_string_destroy);
+	}
+	
+	FILE* fp = fopen("dictionary.txt", "r");	
+	MY_STRING hExtract = my_string_init_default();
+	while (my_string_extraction(hExtract, fp) == SUCCESS)
+	{
+		int index = my_string_get_size(hExtract);
+		generic_vector_push_back(a[index], my_string_init_copy(hExtract));
 	}
 
-	a[0] = my_string_init_c_string("COPY ME!");
-	for (int i = 1; i < 100; i++)
-	{
-		a[i] = my_string_init_copy(a[0]);
-	}
 
-	my_string_destroy(a);
-	a[0] = my_string_init_c_string("FIRST FIFTY!");
-	for (int i = 1; i < 50; i++)
-	{
-		my_string_assignment(a[i], a[0]);	
-	}
+	fclose(fp);
 
-	for (int i = 0; i < 50; i++)
-	{
-		my_string_swap(a[i], a[99 - i]);
-	}
-
-	for (int i = 0; i < 100; i++)
-	{
-		my_string_insertion(a[i], stdout);
-		printf(": %d\n", i + 1);
-		my_string_destroy(a + i);
-	}
- 
+	
  return 0;
 }

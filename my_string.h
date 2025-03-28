@@ -1,12 +1,7 @@
 #include <stdio.h>
+#include "status.h"
 
 typedef void* MY_STRING;
-
-enum status { FAILURE, SUCCESS };
-typedef enum status Status;
-
-enum boolean { FALSE, TRUE };
-typedef enum boolean Boolean;
 
 MY_STRING my_string_init_default(void);
 

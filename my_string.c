@@ -117,7 +117,6 @@ Status my_string_extraction(MY_STRING hMy_string, FILE* fp)
     
   if (fp == NULL)
     {
-      printf("Failed to open dictionary file for reading.\n");
       return FAILURE;
     }
 

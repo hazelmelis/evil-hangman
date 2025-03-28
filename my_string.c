@@ -263,7 +263,7 @@ Status my_string_assignment(MY_STRING hLeft, MY_STRING hRight)
 
 	for (int i = 0; i < pRight->size; i++)
 	{		
-		if (temp_capacity - 1 <= i)
+		if (i >= temp_capacity - 1)
 		{
 			char* temp_data1 = (char*)realloc(temp_data, temp_capacity * 2);
 			if (temp_data1 == NULL) 
@@ -271,6 +271,7 @@ Status my_string_assignment(MY_STRING hLeft, MY_STRING hRight)
 				free(temp_data);
 				return FAILURE;
 			}
+			temp_data = temp_data1;
 			temp_capacity *= 2;
 		}
 
@@ -283,20 +284,38 @@ Status my_string_assignment(MY_STRING hLeft, MY_STRING hRight)
 	pLeft->capacity = temp_capacity;
 	pLeft->data = temp_data;
 
-	pRight->data[2] = 'W';
-
 	return SUCCESS;
 }
 
 MY_STRING my_string_init_copy(MY_STRING hMy_string)
 {
 	MY_STRING hCopy = my_string_init_default();
-	if (hCopy == NULL) return FAILURE;
-
-	if (my_string_assignment(hCopy, hMy_string) == FAILURE)
-	{
-		return NULL;
+	if (hCopy != NULL)
+	{	
+		if(my_string_assignment(hCopy, hMy_string) == FAILURE)
+		{
+			my_string_destroy(&hCopy);
+			return NULL;
+		}
 	}
 	return hCopy;
 
+}
+
+void my_string_swap(MY_STRING hLeft, MY_STRING hRight)
+{
+	My_string* pLeft = (My_string*)hLeft;
+	My_string* pRight = (My_string*)hRight;
+
+	int temp_size = pRight->size;
+	int temp_capacity = pRight->capacity;
+	char* temp_data = pRight->data;
+
+	pRight->size = pLeft->size;
+	pRight->capacity = pLeft->capacity;
+	pRight->data = pLeft->data;
+
+	pLeft->size = temp_size;
+	pLeft->capacity = temp_capacity;
+	pLeft->data = temp_data;
 }

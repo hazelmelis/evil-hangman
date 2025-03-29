@@ -99,14 +99,14 @@ int generic_vector_get_capacity(GENERIC_VECTOR hVector)
 }
 
 
-ITEM* generic_vector_at(GENERIC_VECTOR hVector, int index)
+ITEM generic_vector_at(GENERIC_VECTOR hVector, int index)
 {
 	Generic_vector* pVector = (Generic_vector*)hVector;
 	if (index < 0 || index >= pVector->size)
 	{
 		return NULL;
 	}
-	return pVector->data + index;
+	return pVector->data[index];
 }
 
 Status generic_vector_pop_back(GENERIC_VECTOR hVector)
@@ -117,7 +117,7 @@ Status generic_vector_pop_back(GENERIC_VECTOR hVector)
 	{
 		return FAILURE;
 	}
-	pVector->destroy(&pVector->data[pVector->size - 1]);
+	pVector->destroy(pVector->data + (pVector->size - 1));
 	pVector->size--;
 	return SUCCESS;
 }

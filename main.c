@@ -20,6 +20,11 @@ int main(int argc, char* argv[])
 		generic_vector_push_back(a[index], my_string_init_copy(hExtract));
 	}
 
+	for (int i = 0; i < 30; ++i)
+	{
+		printf("WORDS OF SIZE %d: %d\n", i, generic_vector_get_size(a[i]));
+	}
+
 
 	fclose(fp);
 

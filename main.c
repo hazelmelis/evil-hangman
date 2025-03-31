@@ -6,6 +6,16 @@
 int main(int argc, char* argv[])
 {
 
+	MY_STRING hS = my_string_init_c_string("");
+	MY_STRING hSh = my_string_init_c_string("a");
+
+	printf("%d\n", my_string_compare(hS, hSh));
+	my_string_pop_back(hSh);
+
+	printf("%d\n", my_string_compare(hS, hSh));
+	my_string_destroy(&hS);
+	my_string_destroy(&hSh);
+/*
 	GENERIC_VECTOR a[30];
 	for (int i = 0; i < 30; i++)
 	{
@@ -27,7 +37,7 @@ int main(int argc, char* argv[])
 
 
 	fclose(fp);
-
+*/
 	
  return 0;
 }

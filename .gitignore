@@ -6,3 +6,6 @@
 
 # Vim swap files
 *.sw?
+
+*.o
+string_driver

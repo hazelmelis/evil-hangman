@@ -5,17 +5,6 @@
 
 int main(int argc, char* argv[])
 {
-
-	MY_STRING hS = my_string_init_c_string("");
-	MY_STRING hSh = my_string_init_c_string("a");
-
-	printf("%d\n", my_string_compare(hS, hSh));
-	my_string_pop_back(hSh);
-
-	printf("%d\n", my_string_compare(hS, hSh));
-	my_string_destroy(&hS);
-	my_string_destroy(&hSh);
-/*
 	GENERIC_VECTOR a[30];
 	for (int i = 0; i < 30; i++)
 	{
@@ -27,17 +16,16 @@ int main(int argc, char* argv[])
 	while (my_string_extraction(hExtract, fp) == SUCCESS)
 	{
 		int index = my_string_get_size(hExtract);
-		generic_vector_push_back(a[index], my_string_init_copy(hExtract));
+		generic_vector_push_back(a[index], hExtract);
 	}
+	my_string_destroy(&hExtract);
 
 	for (int i = 0; i < 30; ++i)
 	{
 		printf("WORDS OF SIZE %d: %d\n", i, generic_vector_get_size(a[i]));
+		generic_vector_destroy(a + i);
 	}
 
-
 	fclose(fp);
-*/
-	
  return 0;
 }

@@ -1,6 +1,6 @@
 CC = gcc -g
 CFLAGS = -Wall --std=c99
-OBJECTS = main.o my_string.o generic_vector.o assoc_array.o
+OBJECTS = main.o my_string.o generic_vector.o node.o
 TESTOBJ = my_string.o unit_test.o test_def.o
 
 string_driver: $(OBJECTS)
@@ -11,8 +11,8 @@ my_string.o: my_string.h my_string.c
 	$(CC) $(CFLAGS) -c my_string.c -o my_string.o
 generic_vector.o: generic_vector.h generic_vector.c
 	$(CC) $(CFLAGS) -c generic_vector.c -o generic_vector.o
-assoc_array.o: assoc_array.h assoc_array.c
-	$(CC) $(CFLAGS) -c assoc_array.c -o assoc_array.o
+node.o: node.h node.c
+	$(CC) $(CFLAGS) -c node.c -o node.o
 
 unit_test: $(TESTOBJ)
 	$(CC) $(CFLAGS) -o unit_test $(TESTOBJ)

@@ -3,137 +3,59 @@
 #include <ctype.h>
 #include "my_string.h"
 #include "generic_vector.h"
-#include "assoc_array.h"
+#include "node.h"
 
-void clear_keyboard_buffer(void);
+void clear_keyboard_buffer();
+void get_word_length(int* pLength);
+void get_number_of_guesses(int* pGuesses);
+void ask_about_word_list(Boolean* print_word_list);
+void get_guess(char* pGuess, GENERIC_VECTOR word_list, Boolean print_word_list);
 
 int main(int argc, char* argv[])
 {
-	MY_STRING word = my_string_init_c_string("The");
-	MY_STRING current = my_string_init_c_string("---");
-	MY_STRING new = my_string_init_default();
-	get_word_key_value(current, new, word, 't');
-	printf("%s\n", my_string_c_str(new));
-	
-	
-	MY_STRING word2 = my_string_init_c_string("Truck");
-	MY_STRING current2 = my_string_init_c_string("-----");
-	MY_STRING new2 = my_string_init_default();
-	get_word_key_value(current2, new2, word2, 'r');
-	printf("%s\n", my_string_c_str(new2));
-	MY_STRING word3 = my_string_init_c_string("happy");
-	MY_STRING current3 = my_string_init_c_string("--ppy");
-	MY_STRING new3 = my_string_init_default();
-	get_word_key_value(current3, new3, word3, 'h');
-	printf("%s\n", my_string_c_str(new3));
-	MY_STRING word4 = my_string_init_c_string("awesome");
-	MY_STRING current4 = my_string_init_c_string("--e---e");
-	MY_STRING new4 = my_string_init_default();
-	get_word_key_value(current4, new4, word4, 'z');
-	printf("%s\n", my_string_c_str(new4));
-
-	my_string_destroy(&current);
-	my_string_destroy(&current2);
-	my_string_destroy(&current3);
-	my_string_destroy(&current4);
-	my_string_destroy(&word);
-	my_string_destroy(&word2);
-	my_string_destroy(&word3);
-	my_string_destroy(&word4);
-	my_string_destroy(&new);
-	my_string_destroy(&new2);
-	my_string_destroy(&new3);
-	my_string_destroy(&new4);
-	
-	// Push all words from dictionary.txt into generic vectors in an array based on word length, represented by the index.
-	GENERIC_VECTOR my_strings[30];
+	GENERIC_VECTOR dictionary_strings[30];
 	for (int i = 0; i < 30; i++)
 	{
-		my_strings[i] = generic_vector_init_default(my_string_init_copy, my_string_destroy);
+		dictionary_strings[i] = generic_vector_init_default(my_string_init_copy, my_string_destroy);
 	}
 	FILE* fp = fopen("dictionary.txt", "r");	
-	MY_STRING hExtract = my_string_init_default();
-	while (my_string_extraction(hExtract, fp) == SUCCESS)
+	MY_STRING extract = my_string_init_default();
+	while (my_string_extraction(extract, fp) == SUCCESS)
 	{
-		int index = my_string_get_size(hExtract);
-		generic_vector_push_back(my_strings[index], hExtract);
+		int index = my_string_get_size(extract);
+		generic_vector_push_back(dictionary_strings[index], extract);
 	}
-	my_string_destroy(&hExtract);
+	my_string_destroy(&extract);
 	fclose(fp);
 
-	// Start game interface
-	printf("********************************* LET'S PLAY HANGMAN! *********************************\n");
-	printf("Enter your desired word length: ");
-	int length;
-	int noc = scanf(" %d", &length);
-	while (noc != 1 || length <= 1 || length == 23 || (length >= 25 && length <= 27) || length > 29)
-	{
-		printf("There are no words of that length. Try again: ");
-		clear_keyboard_buffer();
-		noc = scanf(" %d", &length);
-	}
-	printf("\nGreat! I'm thinking of a word with %d letters.\n\n", length);
-	
-	printf("Enter the number of guesses you want: ");
-	int guesses;
-	noc = scanf(" %d", &guesses);
-	while (noc != 1 || guesses < 1)
-	{
-		printf("You'll need at least one guess! Try again: ");
-		clear_keyboard_buffer();
-		noc = scanf(" %d", &guesses);
-	}
-	if (guesses == 1) printf("\nAlright, you have 1 chance to guess my word.\n\n");
-	else printf("\nAlright, you have %d chances to guess my word.\n\n", guesses);
+	printf("**********");	
+	printf("****************************************** LET'S PLAY HANGMAN! *******************************************");
+	printf("**********\n");	
+	int noc;
 
-	printf("(For grading purposes) would you like a running total of the words remaining in the word list? (y/n): ");
-	char input;
-	scanf(" %c", &input);
-	while (input != 'Y' && input != 'y' && input != 'N' && input != 'n')
-	{
-		printf("Invalid answer. Enter 'y' or 'n': ");
-		clear_keyboard_buffer();
-		scanf(" %c", &input);
-	}
-	clear_keyboard_buffer();
-
-	Boolean printWordList = (input == 'y' || input == 'Y') ? TRUE : FALSE;
-
-	GENERIC_VECTOR word_list = my_strings[length];
+	int word_length;
+	get_word_length(&word_length);	
+	GENERIC_VECTOR current_word_list = dictionary_strings[word_length];
 	MY_STRING current_key = my_string_init_default();
-	for (int i = 0; i < length; ++i)
+	for (int i = 0; i < word_length; ++i)
 	{
 		my_string_push_back(current_key, '-');
 	}
+	my_string_destroy(&current_key);
 
-	Node* root = NULL;
+	Boolean print_word_list;
+	ask_about_word_list(&print_word_list);
+
+	int guesses;
+	get_number_of_guesses(&guesses);
+	
+	char guess;
+	get_guess(&guess, current_word_list, print_word_list);	
 
 	for (int i = 0; i < 30; i++)
 	{
-		printf("WORDS OF SIZE %d: %d\n", i, generic_vector_get_size(my_strings[i]));
-		//generic_vector_destroy(my_strings + i);
+		generic_vector_destroy(dictionary_strings + i);
 	}
-
-	// **********************************************************************************************
-
-	char guess;
-	printf("Guess a letter: ");
-	scanf("%c", &guess);
-	while (!isalpha(guess))
-	{
-		clear_keyboard_buffer();
-		printf("That's not a letter. Try again: ");
-		scanf("%c", &guess);
-	}
-	clear_keyboard_buffer();
-	guess = tolower(guess);
-	printf("You guessed %c\n", guess);
-
-	for(int i = 0; i < generic_vector_get_size(current_strings); ++i)
-	{
-		tree_insert(;
-	}
-
 
  	return 0;
 }
@@ -147,4 +69,70 @@ void clear_keyboard_buffer(void)
 		scanf("%c", &c);
 	} 
 	while (c != '\n');
+}
+
+void get_word_length(int* pLength)
+{
+		
+	printf("Enter your desired word length: ");
+	int noc = scanf(" %d", pLength);
+	while (noc != 1 || *pLength <= 1 || *pLength == 23 || (*pLength >= 25 && *pLength <= 27) || *pLength > 29)
+	{
+		printf("There are no words of that length. Try again: ");
+		clear_keyboard_buffer();
+		noc = scanf(" %d", pLength);
+	}
+	printf("Great! I'm thinking of a word with %d letters.\n", *pLength);
+}
+
+
+void get_number_of_guesses(int* pGuesses)
+{
+	printf("Enter the number of guesses you want: ");
+	int noc = scanf(" %d", pGuesses);
+	while (noc != 1 || *pGuesses < 1)
+	{
+		printf("You'll need at least one guess! Try again: ");
+		clear_keyboard_buffer();
+		noc = scanf(" %d", pGuesses);
+	}
+	if (*pGuesses == 1) printf("That's bold! You only have 1 chance to guess my word.\n\n");
+	else printf("Alright, you have %d chances to guess my word.\n\n", *pGuesses);
+}
+
+void ask_about_word_list(Boolean* print_word_list)
+{
+	
+	printf("(For grading purposes) would you like a running total of the words remaining in the word list? (y/n): ");
+	char input;
+	scanf(" %c", &input);
+	while (input != 'Y' && input != 'y' && input != 'N' && input != 'n')
+	{
+		printf("Invalid answer. Enter 'y' or 'n': ");
+		clear_keyboard_buffer();
+		scanf(" %c", &input);
+	}
+	clear_keyboard_buffer();
+
+	*print_word_list = (input == 'y' || input == 'Y') ? TRUE : FALSE;
+}
+
+void get_guess(char* pGuess, GENERIC_VECTOR word_list, Boolean print_word_list)
+{
+	if (print_word_list == TRUE)
+	{
+		printf("Words remaining in word list: %d\n", generic_vector_get_size(word_list));
+	}
+	printf("Guess a letter: ");
+	scanf(" %c", pGuess);
+	
+	while (!isalpha(*pGuess))
+	{
+		printf("That's not a letter. Try again: ");
+		clear_keyboard_buffer();
+		scanf(" %c", pGuess);
+	}
+	clear_keyboard_buffer();
+
+	*pGuess = tolower(*pGuess);
 }

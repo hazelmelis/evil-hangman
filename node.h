@@ -17,6 +17,6 @@ struct node
 };
 
 Status get_word_key_value(MY_STRING current_word_family, MY_STRING new_key, MY_STRING word, char guess);
-void assoc_array_insert(ASSOC_ARRAY assoc_array, MY_STRING new_string, MY_STRING current_key);
+//void assoc_array_insert(ASSOC_ARRAY assoc_array, MY_STRING new_string, MY_STRING current_key);
 
 #endif

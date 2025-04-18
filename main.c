@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "my_string.h"
 #include "generic_vector.h"
 
@@ -60,7 +61,7 @@ int main(int argc, char* argv[])
 	fclose(fp);
 
 	// Start game interface
-	/*printf("********************************* LET'S PLAY HANGMAN! *********************************\n");
+	printf("********************************* LET'S PLAY HANGMAN! *********************************\n");
 	printf("Enter your desired word length: ");
 	int length;
 	int noc = scanf(" %d", &length);
@@ -93,17 +94,46 @@ int main(int argc, char* argv[])
 		clear_keyboard_buffer();
 		scanf(" %c", &input);
 	}
-	Boolean printWordList = (input == 'y' || input == 'Y') ? TRUE : FALSE;*/
+	clear_keyboard_buffer();
 
-	//GENERIC_VECTOR hGameVector = my_strings[length];
+	Boolean printWordList = (input == 'y' || input == 'Y') ? TRUE : FALSE;
 
-	for (int i = 0; i < 30; ++i)
+	GENERIC_VECTOR current_strings = my_strings[length];
+	MY_STRING current_key = my_string_init_default();
+	for (int i = 0; i < length; ++i)
+	{
+		my_string_push_back(current_key, '-');
+	}
+	ASSOC_ARRAY assoc_array = NULL;
+
+	for (int i = 0; i < 30; i++)
 	{
 		printf("WORDS OF SIZE %d: %d\n", i, generic_vector_get_size(my_strings[i]));
-		generic_vector_destroy(my_strings + i);
+		//generic_vector_destroy(my_strings + i);
 	}
 
- return 0;
+	// **********************************************************************************************
+
+	char guess;
+	printf("Guess a letter: ");
+	scanf("%c", &guess);
+	while (!isalpha(guess))
+	{
+		clear_keyboard_buffer();
+		printf("That's not a letter. Try again: ");
+		scanf("%c", &guess);
+	}
+	clear_keyboard_buffer();
+	guess = tolower(guess);
+	printf("You guessed %c\n", guess);
+
+	for(int i = 0; i < generic_vector_get_size(current_strings); ++i)
+	{
+		assoc_array_insert(assoc_array, generic_vector_at(current_strings, i), current_key);
+	}
+
+
+ 	return 0;
 }
 
 

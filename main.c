@@ -99,13 +99,14 @@ int main(int argc, char* argv[])
 
 	Boolean printWordList = (input == 'y' || input == 'Y') ? TRUE : FALSE;
 
-	GENERIC_VECTOR current_strings = my_strings[length];
+	GENERIC_VECTOR word_list = my_strings[length];
 	MY_STRING current_key = my_string_init_default();
 	for (int i = 0; i < length; ++i)
 	{
 		my_string_push_back(current_key, '-');
 	}
-	ASSOC_ARRAY assoc_array = NULL;
+
+	Node* root = NULL;
 
 	for (int i = 0; i < 30; i++)
 	{
@@ -130,7 +131,7 @@ int main(int argc, char* argv[])
 
 	for(int i = 0; i < generic_vector_get_size(current_strings); ++i)
 	{
-		assoc_array_insert(assoc_array, generic_vector_at(current_strings, i), current_key);
+		tree_insert(;
 	}
 
 

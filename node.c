@@ -1,23 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "assoc_array.h"
-
-typedef struct assoc_array Assoc_array;
-struct assoc_array
-{
-	MY_STRING hKey;
-	GENERIC_VECTOR hStrings;
-};
-
-typedef struct node Node;
-struct Node
-{
-	Assoc_array data;
-	int level;
-	Node* left;
-	Node* right;
-};
 
 Status get_word_key_value(MY_STRING current_word_family, MY_STRING new_key, MY_STRING word, char guess)
 {

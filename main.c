@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include "my_string.h"
 #include "generic_vector.h"
+#include "assoc_array.h"
 
 void clear_keyboard_buffer(void);
 

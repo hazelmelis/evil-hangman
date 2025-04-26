@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <time.h>
 #include "my_string.h"
 #include "generic_vector.h"
 #include "node.h"
@@ -9,7 +10,9 @@ void clear_keyboard_buffer();
 void get_word_length(int* pLength);
 void get_number_of_guesses(int* pGuesses);
 void ask_about_word_list(Boolean* print_word_list);
-void get_guess(char* pGuess, GENERIC_VECTOR word_list, Boolean print_word_list);
+void get_guess(char* pGuess, Node* temp, Boolean print_word_list);
+GENERIC_VECTOR get_new_word_list(char guess, GENERIC_VECTOR current_word_list, MY_STRING current_key);
+void print(Node* root);
 
 int main(int argc, char* argv[])
 {
@@ -31,35 +34,135 @@ int main(int argc, char* argv[])
 	printf("**********");	
 	printf("****************************************** LET'S PLAY HANGMAN! *******************************************");
 	printf("**********\n");	
-	int noc;
 
 	int word_length;
 	get_word_length(&word_length);	
-	GENERIC_VECTOR current_word_list = dictionary_strings[word_length];
-	MY_STRING current_key = my_string_init_default();
+
+	Node* temp = malloc(sizeof(Node));
+	temp->my_strings = generic_vector_init_default(my_string_init_copy, my_string_destroy);
+	temp->left = NULL;
+	temp->right = NULL;
+
+	for (int i = 0; i < generic_vector_get_size(dictionary_strings[word_length]); ++i)
+	{
+		generic_vector_push_back(temp->my_strings, generic_vector_at(dictionary_strings[word_length], i));
+	}
+	
+	for (int i = 0; i < 30; ++i)
+	{
+		generic_vector_destroy(dictionary_strings + i);	
+	}
+
+
+	MY_STRING init_key = my_string_init_default();
 	for (int i = 0; i < word_length; ++i)
 	{
-		my_string_push_back(current_key, '-');
-	}
-	my_string_destroy(&current_key);
+		my_string_push_back(init_key, '-');
+	}	
+	temp->key = init_key;
+	MY_STRING new_key = my_string_init_default();
 
 	Boolean print_word_list;
 	ask_about_word_list(&print_word_list);
 
-	int guesses;
-	get_number_of_guesses(&guesses);
-	
-	char guess;
-	get_guess(&guess, current_word_list, print_word_list);	
+	int total_guesses;
+	get_number_of_guesses(&total_guesses);
+	MY_STRING prev_guesses = my_string_init_default();
 
-	for (int i = 0; i < 30; i++)
+	if (print_word_list == TRUE)
 	{
-		generic_vector_destroy(dictionary_strings + i);
+		printf("Word list partition\n");
+		print(temp);
+		printf("\n");
 	}
 
+	printf("Guesses remaining: %d\n", total_guesses);
+	printf("Used letters:");
+	for (int i = 0; i < my_string_get_size(prev_guesses); ++i)
+	{
+		printf(" %c", *my_string_at(prev_guesses, i));
+	}
+	printf("\nWord: %s\n", my_string_c_str(temp->key));
+		
+	char guess;
+	get_guess(&guess, temp, print_word_list);
+//partition 
+	
+//*************************************************************************************
+//****************************************************************************************
+
+	Node* root = NULL;
+	for (int i = 0; i < generic_vector_get_size(temp->my_strings); ++i)
+	{	
+		get_word_key_value(temp->key, new_key, generic_vector_at(temp->my_strings, i), guess);	
+		check_tree(&root, generic_vector_at(temp->my_strings, i), new_key); 
+	}
+	print(root);
+
+	Node* largest = root;
+	find_largest_word_family(root, largest);
+
+	int size = generic_vector_get_size(temp->my_strings);
+	for (int i = 0; i < size; ++i)
+	{
+		generic_vector_pop_back(temp->my_strings);
+	}
+	for (int i = 0; i < generic_vector_get_size(largest->my_strings); ++i)
+	{
+		generic_vector_push_back(temp->my_strings, generic_vector_at(largest->my_strings, i));
+	}
+
+	my_string_swap(temp->key, largest->key);	
+
+	destroy_tree(&root);
+
+	printf("\nsize of largest: %d\n", generic_vector_get_size(temp->my_strings));
+	printf("key: %s\n", my_string_c_str(temp->key));
+	
+	int rand_index;
+	srand(time(NULL));
+	rand_index = rand() % generic_vector_get_size(temp->my_strings);
+
+	
+	
+	my_string_destroy(&new_key);
+	my_string_destroy(&prev_guesses);
+	destroy_tree(&temp);
+	
  	return 0;
 }
 
+void print(Node* root)
+{
+	if (root == NULL) return;
+	print(root->left);
+	printf("%s %d\n", my_string_c_str(root->key), generic_vector_get_size(root->my_strings));
+	print(root->right);
+}
+/*
+GENERIC_VECTOR get_new_word_list(char guess, GENERIC_VECTOR current_word_list, MY_STRING current_key)
+{
+	Node* root = NULL;
+	MY_STRING new_key = my_string_init_default();
+	for (int i = 0; i < generic_vector_get_size(current_word_list); ++i)
+	{	
+		get_word_key_value(current_key, new_key, generic_vector_at(current_word_list, i), guess);
+	
+		check_tree(root, generic_vector_at(current_word_list, i), new_key); 
+	}
+
+	Node* largest = root;
+	find_largest_word_family(root, &largest);
+	
+	my_string_assignment(current_key, largest->key);
+	GENERIC_VECTOR temp = largest->my_strings;
+
+//	largest->my_strings = NULL;
+	
+	//destroy
+	return temp;	
+}
+*/
 
 void clear_keyboard_buffer(void)
 {
@@ -117,12 +220,8 @@ void ask_about_word_list(Boolean* print_word_list)
 	*print_word_list = (input == 'y' || input == 'Y') ? TRUE : FALSE;
 }
 
-void get_guess(char* pGuess, GENERIC_VECTOR word_list, Boolean print_word_list)
+void get_guess(char* pGuess, Node* temp, Boolean print_word_list)
 {
-	if (print_word_list == TRUE)
-	{
-		printf("Words remaining in word list: %d\n", generic_vector_get_size(word_list));
-	}
 	printf("Guess a letter: ");
 	scanf(" %c", pGuess);
 	
@@ -136,3 +235,5 @@ void get_guess(char* pGuess, GENERIC_VECTOR word_list, Boolean print_word_list)
 
 	*pGuess = tolower(*pGuess);
 }
+
+

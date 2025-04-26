@@ -17,6 +17,9 @@ struct node
 };
 
 Status get_word_key_value(MY_STRING current_word_family, MY_STRING new_key, MY_STRING word, char guess);
+void check_tree(Node** root, MY_STRING word, MY_STRING key);
+void find_largest_word_family(Node* root, Node* largest);
+void destroy_tree(Node** root);
 //void assoc_array_insert(ASSOC_ARRAY assoc_array, MY_STRING new_string, MY_STRING current_key);
 
 #endif

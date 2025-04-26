@@ -12,9 +12,15 @@ int get_number_of_guesses();
 Boolean ask_about_word_list();
 char get_guess(MY_STRING prev_guesses);
 GENERIC_VECTOR get_new_word_list(char guess, GENERIC_VECTOR current_word_list, MY_STRING current_key);
+int user_wishes_to_continue();
 
 int main(int argc, char* argv[])
 {
+	int wishes_to_continue = 1;
+	while (wishes_to_continue)
+	{
+
+
 	// Partition entire dictionary into vectors according to word length 
 	GENERIC_VECTOR dictionary_strings[30];
 	for (int i = 0; i < 30; i++)
@@ -85,6 +91,7 @@ int main(int argc, char* argv[])
 	int contains_blanks = 1;
 
 	// Flow for each guess 
+
 	while (total_guesses > 0 && contains_blanks)
 	{
 		//printf("largest key: %s   size: %d\n", my_string_c_str(temp->key), generic_vector_get_size(temp->my_strings));
@@ -154,12 +161,13 @@ int main(int argc, char* argv[])
 		}
 		else printf("\n");
 		destroy_tree(&root);
+
 	}
 
 	if (!contains_blanks)
 	{
 		printf("Wow, you won! Congratulations!\n");
-		printf("I was indeed thinking of \"%s\" this whole time!\n", my_string_c_str(temp->key));
+		printf("I was indeed thinking of \"%s\" this whole time!\n\n", my_string_c_str(temp->key));
 	}
 	else
 	{
@@ -168,39 +176,18 @@ int main(int argc, char* argv[])
 		MY_STRING winning_word = generic_vector_at(temp->my_strings, rand_index);
 
 		printf("HA HA, YOU LOST\n");
-		printf("I was thinking of \"%s\"\n", my_string_c_str(winning_word));
+		printf("I was thinking of \"%s\"\n\n", my_string_c_str(winning_word));
 	}	
 	
 	my_string_destroy(&prev_guesses);
 	destroy_tree(&temp);
 	
+	wishes_to_continue = user_wishes_to_continue();
+
+	}
+	
  	return 0;
 }
-
-/*
-GENERIC_VECTOR get_new_word_list(char guess, GENERIC_VECTOR current_word_list, MY_STRING current_key)
-{
-	Node* root = NULL;
-	MY_STRING new_key = my_string_init_default();
-	for (int i = 0; i < generic_vector_get_size(current_word_list); ++i)
-	{	
-		get_word_key_value(current_key, new_key, generic_vector_at(current_word_list, i), guess);
-	
-		check_tree(root, generic_vector_at(current_word_list, i), new_key); 
-	}
-
-	Node* largest = root;
-	find_largest_word_family(root, &largest);
-	
-	my_string_assignment(current_key, largest->key);
-	GENERIC_VECTOR temp = largest->my_strings;
-
-//	largest->my_strings = NULL;
-	
-	//destroy
-	return temp;	
-}
-*/
 
 void clear_keyboard_buffer(void)
 {
@@ -317,4 +304,22 @@ char get_guess(MY_STRING prev_guesses)
 	return input;
 }
 
+int user_wishes_to_continue()
+{
+	char input; 
+	printf("Want to play again? (y/n): ");
+	scanf(" %c", &input);
+
+	while (input != 'y' && input != 'Y' && input != 'n' && input != 'N')
+	{
+		printf("Invalid answer. Enter 'y' or 'n': ");
+		clear_keyboard_buffer();
+		scanf(" %c", &input);	
+	}
+	clear_keyboard_buffer();
+
+	printf("\n");
+	
+	return input == 'y' || input == 'Y';
+}
 

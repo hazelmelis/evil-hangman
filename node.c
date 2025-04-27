@@ -10,8 +10,7 @@ void print_tree(Node* root)
 {
 	if (root == NULL) return;
 	print_tree(root->left);
-	printf("%s %d    depth: %d", my_string_c_str(root->key), generic_vector_get_size(root->my_strings), root->depth);
-	printf("     bf: %d\n", get_balance_factor(root));
+	printf("%s %d\n", my_string_c_str(root->key), generic_vector_get_size(root->my_strings));
 	print_tree(root->right);
 }
 
@@ -138,7 +137,6 @@ void check_for_balance(Node** root)
 
 	if (get_balance_factor(*root) >= 2)
 	{
-		/*
 		if (get_balance_factor((*root)->right) < 0)
 		{
 			double_left_rotation(root);
@@ -147,12 +145,10 @@ void check_for_balance(Node** root)
 		{
 			left_rotation(root);
 		}
-		*/
 	}
 		
 	else if (get_balance_factor(*root) <= -2)
 	{
-		/*
 		if (get_balance_factor((*root)->left) > 0)
 		{
 			double_right_rotation(root);
@@ -161,39 +157,37 @@ void check_for_balance(Node** root)
 		{
 			right_rotation(root);
 		}
-		*/
 	}
 }
 
 void right_rotation(Node** root)
 {
+	if (root == NULL || *root == NULL ) return;
+
 	Node* new_root = (*root)->left;
-	new_root->depth--;
-	adjust_depths(new_root->left, -1);
 
 	Node* new_right = *root;
-	new_right->depth++;
-	adjust_depths(new_right->right, 1);
+	adjust_depths(&((*root)->right), 1);
 
 	new_right->left = new_root->right;
 
 	new_root->right = new_right;
+
 	*root = new_root;
 }
 
 void left_rotation(Node** pRoot)
 {
+	if (pRoot == NULL || *pRoot == NULL ) return;
+
 	Node* new_root = (*pRoot)->right;
-	new_root->depth++;
-	adjust_depths(new_root->right, -1);
 
 	Node* new_left = *pRoot;
-	new_left->depth++;
-	adjust_depths(new_left->left, 1);
 
 	new_left->right = new_root->left;
 
 	new_root->left = new_left;
+
 	*pRoot = new_root;
 }
 
@@ -209,13 +203,13 @@ void double_left_rotation(Node** pRoot)
 	left_rotation(pRoot);
 }
 
-void adjust_depths(Node* root, int depth_change)
+void adjust_depths(Node** root, int depth)
 {
-	if (root == NULL) return; 
+	if (root == NULL || *root == NULL) return; 
 
-	root->depth += depth_change;
-	adjust_depths(root->left, depth_change);
-	adjust_depths(root->right, depth_change);
+	adjust_depths(&((*root)->left), depth + 1);
+	(*root)->depth = depth;
+	adjust_depths(&((*root)->right), depth + 1);
 }
 
 void destroy_tree(Node** root)

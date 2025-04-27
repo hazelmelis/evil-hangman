@@ -94,6 +94,7 @@ int main(int argc, char* argv[])
 
 	while (total_guesses > 0 && contains_blanks)
 	{
+		temp->depth = 0;
 		//printf("largest key: %s   size: %d\n", my_string_c_str(temp->key), generic_vector_get_size(temp->my_strings));
 
 		printf("Guesses remaining: %d\n", total_guesses);
@@ -116,8 +117,14 @@ int main(int argc, char* argv[])
 		
 			tree_insert(&root, generic_vector_at(temp->my_strings, i), extract_key, temp->depth); 
 			check_for_balance(&root);
+			adjust_depths(&root, 0);
 
 			my_string_destroy(&extract_key);
+		}
+
+		if (root->depth != 0)
+		{
+			printf("Why the heck is %s depth %d???\n", my_string_c_str(root->key), root->depth);
 		}
 		
 		Node* largest_node = root;

@@ -28,7 +28,7 @@ void right_rotation(Node** root);
 void left_rotation(Node** pRoot);
 void double_right_rotation(Node** pRoot);
 void double_left_rotation(Node** pRoot);
-void adjust_depths(Node* root, int depth_change);
+void adjust_depths(Node** root, int depth);
 void destroy_tree(Node** root);
 
 #endif

@@ -54,6 +54,7 @@ int main(int argc, char* argv[])
 	// Initialize temp node. To be used and updated after each guess
 	Node* temp = malloc(sizeof(Node));
 	temp->my_strings = generic_vector_init_default(my_string_init_copy, my_string_destroy);
+	temp->depth = 0;
 	temp->left = NULL;
 	temp->right = NULL;
 	
@@ -90,7 +91,6 @@ int main(int argc, char* argv[])
 
 	int contains_blanks = 1;
 
-	// Flow for each guess 
 
 	while (total_guesses > 0 && contains_blanks)
 	{
@@ -111,9 +111,11 @@ int main(int argc, char* argv[])
 		for (int i = 0; i < generic_vector_get_size(temp->my_strings); ++i)
 		{
 			MY_STRING extract_key = my_string_init_copy(temp->key);	
-
-			get_word_key_value(temp->key, extract_key, generic_vector_at(temp->my_strings, i), guess);	
-			tree_insert(&root, generic_vector_at(temp->my_strings, i), extract_key); 
+			
+			get_word_key_value(temp->key, extract_key, generic_vector_at(temp->my_strings, i), guess);
+		
+			tree_insert(&root, generic_vector_at(temp->my_strings, i), extract_key, temp->depth); 
+			check_for_balance(&root);
 
 			my_string_destroy(&extract_key);
 		}

@@ -6,11 +6,13 @@
 #include "generic_vector.h"
 #include "node.h"
 
+#define LETTERS_IN_ALPHABET 26
+
 void clear_keyboard_buffer();
 int get_word_length();
 int get_number_of_guesses();
 Boolean ask_about_word_list();
-char get_guess(MY_STRING prev_guesses);
+char get_guess(int* alphabet);
 GENERIC_VECTOR get_new_word_list(char guess, GENERIC_VECTOR current_word_list, MY_STRING current_key);
 int user_wishes_to_continue();
 
@@ -80,7 +82,7 @@ int main(int argc, char* argv[])
 
 	// Ask user how many guesses
 	int total_guesses = get_number_of_guesses();
-	MY_STRING prev_guesses = my_string_init_default();
+	int alphabet[26] = { 0 };
 
 	if (print_word_list == TRUE)
 	{
@@ -99,14 +101,17 @@ int main(int argc, char* argv[])
 
 		printf("Guesses remaining: %d\n", total_guesses);
 		printf("Used letters:");
-		for (int i = 0; i < my_string_get_size(prev_guesses); ++i)
+		for (int i = 0; i < LETTERS_IN_ALPHABET; ++i)
 		{
-			printf(" %c", *my_string_at(prev_guesses, i));
+			if (alphabet[i])
+			{
+				int letter = i + 'a';
+				printf(" %c", letter);
+			}
 		}
 		printf("\nWord: %s\n", my_string_c_str(temp->key));
 		
-		char guess = get_guess(prev_guesses);
-		my_string_push_back(prev_guesses, guess);
+		char guess = get_guess(alphabet);
 
 		Node* root = NULL;
 		for (int i = 0; i < generic_vector_get_size(temp->my_strings); ++i)
@@ -188,7 +193,6 @@ int main(int argc, char* argv[])
 		printf("I was thinking of \"%s\"\n\n", my_string_c_str(winning_word));
 	}	
 	
-	my_string_destroy(&prev_guesses);
 	destroy_tree(&temp);
 	
 	wishes_to_continue = user_wishes_to_continue();
@@ -258,25 +262,13 @@ Boolean ask_about_word_list()
 	return (input == 'y' || input == 'Y') ? TRUE : FALSE;
 }
 
-char get_guess(MY_STRING prev_guesses)
+char get_guess(int* alphabet)
 {
 	char input;
 	printf("Guess a letter: ");
 	scanf(" %c", &input);
 
-	int already_guessed = 0;
-	if (isalpha(input))
-	{
-		input = tolower(input);
-		for (int i = 0; i < my_string_get_size(prev_guesses); ++i)
-		{
-			if (*my_string_at(prev_guesses, i) == input)
-			{
-				already_guessed = 1;
-				break;
-			}
-		}
-	}
+	int already_guessed = 1;
 
 	while (!isalpha(input) || already_guessed)
 	{
@@ -286,29 +278,21 @@ char get_guess(MY_STRING prev_guesses)
 			clear_keyboard_buffer();
 			scanf(" %c", &input);
 		}
-		
-		else if (already_guessed)
+		else
 		{
-			printf("You've already guessed that letter! Try again: ");
-			clear_keyboard_buffer();
-			scanf(" %c", &input);
-		}
-		already_guessed = 0;
-		if (isalpha(input))
-		{
-			input = tolower(input);
-			for (int i = 0; i < my_string_get_size(prev_guesses); ++i)
+			already_guessed = alphabet[input - 'a'];
+
+			if (already_guessed)
 			{
-				if (*my_string_at(prev_guesses, i) == input)
-				{	
-					already_guessed = 1;
-					break;
-				}
+				printf("You've already guessed that letter! Try again: ");
+				clear_keyboard_buffer();
+				scanf(" %c", &input);	
 			}
 		}
-
 	}
 	clear_keyboard_buffer();
+
+	alphabet[input - 'a'] = 1;
 
 	return input;
 }
